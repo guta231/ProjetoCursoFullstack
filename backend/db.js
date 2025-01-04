@@ -1,11 +1,16 @@
 const express = require("express");
-const rotaLivros = require("./rotas/rotaLivros")
+const rotaLivros = require("./rotas/rotaLivros");
+
 
 const app = express();
+app.use(express.json());
 
 const PORT = 8000;
 
-app.use("/livros", rotaLivros)
+
+app.use("/livros", rotaLivros);
+
+
 
 
 
