@@ -1,41 +1,80 @@
-const fs = require("fs");
+const { getLivroPorId, getTodosLivros, insereLivro, editarLivro, deletarLivros } = require("../servicos/livros");
 
-const livros = JSON.parse(fs.readFileSync("livros.json"));
 
 const getLivros = (req, res) => {
     try{
+        res.send(getTodosLivros());
+    }catch(error){
+        res.status(500);
+        res.send("Erro interno");
+    }
+}
+
+const getLivro = (req, res) => {
+    try{
+        const id = req.params.id;
+
+        if (id && Number(id)){
+            const livro = getLivroPorId(id);
+            res.send(livro);
+        }else{
+            res.status(422);
+            res.send("id inválido");
+        }
         
-        res.send(livros);
+        
     }
     catch(error){
         res.status(500);
         res.send(error.message);
     }
-    
 
 };
 
+
+
 const postLivros = (req, res) => {
     try{
-        res.send("Voce fes uma requisição usando POST");
+        const newLivro = req.body;
+        insereLivro(newLivro);
+        res.status(201);
+        res.send("livro inserido com sucesso");
     }catch(error){
         res.status(500);
-        res.send(error.message)
+        res.send(error.message);
     }
 }
 
 const patchLivros = (req, res) => {
     try{
-        res.send("Voce fez um requisição usando PATH");
+        const id = req.params.id
+        if (id && Number(id)){
+            const modificacoes = req.body;
+            editarLivro(modificacoes, id);
+            res.send("Livro editado com sucesso");
+        }else{
+            res.status(422);
+            res.send("id inválido");
+        }
+        
     }catch(error){
         res.status(500);
-        res.send("Error interno detechtado");
+        res.send("Error interno detectado");
     }
 }
 
 const deleteLivros = (req, res) => {
     try{
-        res.send("Voce fez uma requisição DELETE");
+        id = req.params.id;
+        if (id && Number(id)){
+            deletarLivros(id);
+            res.status(204);
+            res.send("Livro deletado com sucesso");
+        }else{
+            res.status(422);
+            res.send("id inválido");
+        }
+        
     }catch(error){
         res.status(500);
         res.send("Erro interno detectado");
@@ -46,5 +85,6 @@ module.exports = {
     getLivros,
     postLivros,
     patchLivros,
-    deleteLivros
+    deleteLivros,
+    getLivro
 }
